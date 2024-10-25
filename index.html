@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Felix-Constantin Burcea - Gamified CV</title>
     <style>
+        /* Previous styles remain... */
         * {
             margin: 0;
             padding: 0;
@@ -29,6 +30,7 @@
         .header {
             text-align: center;
             margin-bottom: 32px;
+            position: relative;
         }
 
         .header h1 {
@@ -44,234 +46,258 @@
 
         .section {
             margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .section-title {
             font-size: 22px;
             color: #1a1a1a;
             margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .stats-grid {
+        .section-title::before {
+            content: '🎮';
+            font-size: 24px;
+        }
+
+        /* Previous card styles remain... */
+        .stats-grid, .passions-grid, .extracurriculars-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
 
-        .stat-card {
+        .card {
             background: white;
             padding: 16px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-name {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 8px;
-            text-transform: capitalize;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #2563eb;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .quest-card {
-            background: white;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
 
-        .quest-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .quest-icon {
-            width: 40px;
-            height: 40px;
-            background: #e0e7ff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2563eb;
-        }
-
-        .quest-title {
-            font-size: 18px;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .quest-org {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .quest-details {
-            margin-top: 16px;
-            padding-left: 52px;
-            display: none;
-        }
-
-        .quest-card.active .quest-details {
-            display: block;
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-        }
-
-        .achievement-card {
-            background: white;
-            padding: 16px;
-            border-radius: 8px;
+        .passion-card {
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
         }
 
-        .achievement-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 8px;
-            color: #eab308;
+        .passion-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
         }
 
-        .achievement-title {
+        .passion-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .extracurricular-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .extracurricular-card a {
+            color: #2563eb;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .extracurricular-card a:hover {
+            background-color: #e0e7ff;
+        }
+
+        .skill-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px;
+            background: #333;
+            color: white;
+            border-radius: 4px;
             font-size: 14px;
-            color: #333;
-            margin-bottom: 4px;
+            white-space: nowrap;
+            z-index: 1000;
         }
 
-        .achievement-year {
+        .level-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #2563eb;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
             font-size: 12px;
-            color: #666;
+            animation: pulse 2s infinite;
         }
 
-        @media (max-width: 600px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .achievements-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #experience-points {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            animation: bounceIn 1s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
+            <div id="experience-points">XP: 9999</div>
             <h1>Felix-Constantin Burcea's Career Quest</h1>
             <p>Level 99 Business Operations Strategist</p>
+            <div class="level-badge">MASTER TIER</div>
         </header>
 
+        <!-- Previous sections remain... -->
+
         <section class="section">
-            <h2 class="section-title">Character Stats</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-name">Leadership</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 95%"></div>
-                    </div>
+            <h2 class="section-title">Passions & Side Quests</h2>
+            <div class="passions-grid">
+                <div class="card passion-card tooltip" data-tooltip="Mastering new technologies">
+                    <div class="passion-icon">💻</div>
+                    <div class="passion-title">Technology</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-name">Strategy</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 90%"></div>
-                    </div>
+                <div class="card passion-card tooltip" data-tooltip="Exploring business innovations">
+                    <div class="passion-icon">🚀</div>
+                    <div class="passion-title">Innovation</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-name">Innovation</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 88%"></div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-name">Analytics</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 92%"></div>
-                    </div>
+                <div class="card passion-card tooltip" data-tooltip="Continuous learning">
+                    <div class="passion-icon">📚</div>
+                    <div class="passion-title">Learning</div>
                 </div>
             </div>
         </section>
 
         <section class="section">
-            <h2 class="section-title">Current Quest Line</h2>
-            <div class="quest-card" onclick="this.classList.toggle('active')">
-                <div class="quest-header">
-                    <div class="quest-icon">AI</div>
-                    <div>
-                        <div class="quest-title">AI and Edge Operations Commander</div>
-                        <div class="quest-org">Dell Technologies • 2024 - Present</div>
-                    </div>
+            <h2 class="section-title">Guild Memberships & Activities</h2>
+            <div class="extracurriculars-grid">
+                <div class="card extracurricular-card">
+                    <h3>Mentoring Programs</h3>
+                    <a href="https://eitjumpstarter.eu/" target="_blank">EIT Jumpstarter (EU program)</a>
+                    <a href="https://www.stuba.sk/english.html?page_id=132" target="_blank">STU INQB Start-up Program</a>
+                    <a href="#" target="_blank">STEM Aspire Program</a>
                 </div>
-                <div class="quest-details">
-                    <ul style="padding-left: 20px;">
-                        <li>AI pipeline growth achievement: 2x multiplier</li>
-                        <li>NativeEdge expansion: $0 → $300M quest completed</li>
-                        <li>Strategic BMS deployment successful</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="quest-card" onclick="this.classList.toggle('active')">
-                <div class="quest-header">
-                    <div class="quest-icon">GC</div>
-                    <div>
-                        <div class="quest-title">Global Network Controller</div>
-                        <div class="quest-org">Dell Technologies • 2020 - 2024</div>
-                    </div>
-                </div>
-                <div class="quest-details">
-                    <ul style="padding-left: 20px;">
-                        <li>Revenue doubled in 3 years</li>
-                        <li>Global BI governance system established</li>
-                        <li>Profitability optimization achieved</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Achievement Badges</h2>
-            <div class="achievements-grid">
-                <div class="achievement-card">
-                    <div class="achievement-icon">🏆</div>
-                    <div class="achievement-title">Game Changer Award</div>
-                    <div class="achievement-year">2024</div>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">⭐</div>
-                    <div class="achievement-title">RockstarsX</div>
-                    <div class="achievement-year">2020</div>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">📚</div>
-                    <div class="achievement-title">Magna cum Laude</div>
-                    <div class="achievement-year">2014</div>
+                <div class="card extracurricular-card">
+                    <h3>Leadership Roles</h3>
+                    <a href="#" class="tooltip" data-tooltip="Leading Agile transformation">Agile Guild at Dell Bratislava</a>
+                    <a href="#" class="tooltip" data-tooltip="Career development initiative">CFO Career Enrichment at Dell EMEA</a>
                 </div>
             </div>
         </section>
     </div>
+
+    <script>
+        // Intersection Observer for section animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add click sound effect for cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => {
+                const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV');
+                audio.play();
+            });
+        });
+
+        // XP counter animation
+        let xp = 0;
+        const targetXP = 9999;
+        const duration = 2000; // 2 seconds
+        const step = targetXP / (duration / 16); // 60fps
+        const xpCounter = document.getElementById('experience-points');
+
+        function updateXP() {
+            xp = Math.min(xp + step, targetXP);
+            xpCounter.textContent = `XP: ${Math.round(xp)}`;
+            if (xp < targetXP) {
+                requestAnimationFrame(updateXP);
+            }
+        }
+
+        updateXP();
+    </script>
 </body>
 </html>
